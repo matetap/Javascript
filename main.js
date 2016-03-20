@@ -1,21 +1,19 @@
-//Dependance
+//Dependances
 'use strict';
 const electron = require('electron');
-
 var Promise = require("bluebird");
 var Promise = require("grunt");
 //var Promise = require("winston");
 var chalk = require('chalk');
+var events = require('events');
+var eventEmitter = new events.EventEmitter();
 
-console.log(chalk.blue("Debut du programme"));
 
-
-/*
-//Horloge qui appel une focntion a chaque heure
 var globalTime = 0;
+//Timer for get and increase the current time
 var timer = setInterval(
   function updateTime(){
-    console.log(chalk.blue("tic",globalTime));
+    console.log(chalk.blue("Il est : ",globalTime, " h"));
     if (globalTime < 23){
       globalTime+=1;
     }else{
@@ -24,36 +22,247 @@ var timer = setInterval(
   }
 ,1000);
 
-*/
+//function for generate random indeteger between low and high
 function rand(low, high) {
-    return Math.random() * (high - low) + low;
+     return Math.floor(Math.random() * (high - low + 1) + low);
+}
+
+//some cosntant parameter
+const nbClient = 2;
+const nbresto = 2;
+
+//The programme is starting
+console.log(chalk.blue("Debut du programme"));
+
+//define the actor of this program
+var Rungis;
+var listRestaurants = [];
+var listClients = [];
+
+
+
+
+function client() {
+  events.EventEmitter.call(this);
+
+  this.on('open', function() {
+      console.log('ring ring ring');
+  });
+
+}client.prototype.__proto__ = events.EventEmitter.prototype;
+
+
+for (var i = 0; i < nbClient; i++) {
+    listClients[i] = new client();
+}
+
+for (var i = 0; i < nbClient; i++) {
+    listClients[i].emit('open');
 }
 
 
 
-const nbClient = 1;
-const nbresto = 2;
-var listClients = [];
+
+
+
+
+
+
+
+
+/*
+
+var Marchant = function(openTime,closetime){
+
+  this.getFood = function(){
+    var delay = rand(0,12500);
+    console.log(chalk.red("wait : ", delay, " min"));
+
+    var eventName = rand(0,10000000);
+    setTimeout(function () {
+        eventEmitter.emit(eventName);
+    }, delay);
+    return eventName;
+  }
+
+}
+
+
+
+//initialise the actor
+Rungis = new Marchant(5,14);
+
+//ask to Rungis for some food
+var name = Rungis.getFood();
+eventEmitter.on(name,function(){
+  //Callback say it's done
+  console.log(chalk.red("fini"));
+
+});
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+var client = function(){
+
+  function choiceRestaurant(){
+    return
+  }
+
+
+  this.loop = function(){
+    choiceRestaurant();
+  }
+
+}
+
+
+//initialise all the client
+for (var i = 0; i < nbClient; i++) {
+    listClients[i] = new client();
+}
+
+
+//start all the client
+for (var i = 0; i < nbClient; i++) {
+    listClients[i].loop();
+}*/
+
+
+
+
+
+
+
+
+
+/*
+
+
+
+
+
+var resto = function(amOp,amCl,pmOp,pmCl){
+
+  this.isOpen = function(){
+    if((globalTime>amOp && globalTime < amCl)||(globalTime>pmOp && globalTime < pmCl) ){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  this.makeMeSandwitch = function (eventName){
+    setTimeout(function () {
+        eventEmitter.emit(eventName);
+    }, 1000);
+
+  }
+
+}
+
+var marchant = function(){
+
+  this.isOpen = function(){
+    if(globalTime>op && globalTime < cl){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+
+
+}
+
+
+//Initialsiation des different participant
+var rungis = new marchant();
+
 var listResto = [];
+for (var i = 0; i < nbresto; i++) {
+    listResto[i] = new resto(11,15,18,23);
+}
+
+
 
 
 
 var client = function(){
+  events.EventEmitter.call(this);
+
+  var faim = true;
+
 
   this.findResto = function (){
-    return listResto[rand(0,listResto.length)]
+    resto_voulu = listclients[0].findResto();
+    console.log("choisi le resto :", chalk.blue(resto_voulu));
+    return rand(0,listResto.length-1);
   }
 
-  this.findResto = function (){
 
+
+  this.enterResto = function (){
+    eventEmitter.on('try_enter',function(){
+
+      //Le client choisi un restorant
+      resto_voulu = listclients[0].findResto();
+      console.log("choisi le resto :", chalk.blue(resto_voulu));
+
+      //Le client essaye de rentrer dans le restorant
+        if (!listResto[resto_voulu].isOpen()){
+          console.log(chalk.red("client 0 n'a pas pu rentrer dans le restaurant", resto_voulu,", il attend 10min"));
+          setTimeout(function () {
+            eventEmitter.emit('try_enter');
+          }, 1000);
+        }else{
+          console.log(chalk.green("client 0 rentre dans le restaurant", resto_voulu));
+          //une fois dedans il commande
+          listResto[resto_voulu].makeMeSandwitch('food_ready');
+          console.log(chalk.green("j'attedn ma bouffe"));
+        }
+
+    });
   }
+
+
+
+
+
+
+  this.entre = function(restaurant){
+      if (!restaurant.isOpen()){
+        console.log(chalk.red("client 0 n'a pas pu rentrer dans le restaurant", resto_voulu,", il attend 10min"));
+
+     }else{
+        console.log(chalk.green("client 0 rentre dans le restaurant", resto_voulu));
+        return true;
+     }
+  }
+
 
 }
 
 
-var resto = function(){
-
-}
 
 
 var listclients = [];
@@ -61,16 +270,51 @@ for (var i = 0; i < nbClient; i++) {
     listclients[i] = new client();
 }
 
-var listResto = [];
-for (var i = 0; i < nbresto; i++) {
-    listResto[i] = new resto();
-}
+console.log(chalk.green("client 0 rentre dans le restaurant"));
+setTimeout(appel_producteur,1000);
+console.log(chalk.green("client 0 rentreddddddant"));
+// si il a faim
+//if (listclients[0].faim){
+
+//listclients[0].loop();
+
+//listclients[1].loop();*/
+/*
+eventEmitter.emit('try_enter');
+
+eventEmitter.on('food_ready',function(){
+  console.log(chalk.green("j'ai ma bouffe !!"));
+});*/
+
+
+
+
+
+
+
 
 
 
 /*
-var events = require('events');
-var eventEmitter = new events.EventEmitter();
+for (var i = 0; i < nbClient; i++) {
+    istclients[i].next();
+}
+
+
+
+
+console.log(chalk.red("j'attedn"));
+setTimeout(function () {
+  console.log('snif')
+}, 5000)
+console.log(chalk.red("fini"));
+
+*/
+
+
+
+/*
+
 
 var connectHandler = function connected(){
   console.log('connection reussie');
