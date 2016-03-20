@@ -30,7 +30,7 @@ function rand(low, high) {
 
 
 //some cosntant parameter
-const nbClient = 2;
+const nbClient = 1;
 const nbRestaurants = 2;
 
 
@@ -47,6 +47,12 @@ var listClients = [];
 //define the seller object
 function seller(){
   events.EventEmitter.call(this);
+
+  this.buyFood = function(rest){
+      //setTimeout(rest.emit.bind(rest, 'newfood'), 10000);
+      this.emit('newfood');
+  }
+
 }seller.prototype.__proto__ = events.EventEmitter.prototype;
 
 
@@ -54,12 +60,35 @@ function seller(){
 function restaurant(amOp,amCl,pmOp,pmCl){
   events.EventEmitter.call(this);
 
+  var food = 0;
+
+  function getfood() {
+    Rungis.buyFood(this);
+  }
+
+  this.on('newfood', function () {
+    console.log(chalk.green("New food !"));
+    food = 10;
+  });
+
   this.isOpen = function(){
     if((globalTime>amOp && globalTime < amCl)||(globalTime>pmOp && globalTime < pmCl) ){
+      if (food < 1){
+        console.log(chalk.red("sorry sir open but there is no food here.. "));
+        getfood();
+        return false;
+      }
       return true;
     }else{
       return false;
     }
+  }
+
+  this.makeMeSandwitch = function(client){
+      if (food<1){
+        getfood();
+      }
+      setTimeout(client.emit.bind(client, 'foodready'), rand(500,5000));
   }
 
 }restaurant.prototype.__proto__ = events.EventEmitter.prototype;
@@ -69,20 +98,35 @@ function restaurant(amOp,amCl,pmOp,pmCl){
 function client() {
   events.EventEmitter.call(this);
 
+    //event client hungry
     this.on('hungry', function () {
 
+      //we randomly choice one of the restaurant
       var choice = rand(0,listRestaurants.length-1);
       console.log(chalk.green("choice ", choice));
 
+      //and look if it is open
       if(!listRestaurants[choice].isOpen()){
-        console.log(chalk.red("Not open. i wait 10min "));
+        //if it's not, wait 10min
+        console.log(chalk.red("Not open or no food, i wait 10min "));
         setTimeout(this.emit.bind(this, 'hungry'), 1000);
-
       }else{
-        console.log(chalk.green("Open !"));
+        //if it's, go in
+        console.log(chalk.green("Open ! i ask for food"));
+        listRestaurants[choice].makeMeSandwitch(this);
+
       }
 
     });
+
+    //event client get food
+    this.on('foodready', function () {
+      console.log(chalk.green("i get my food !!"));
+    });
+
+
+
+
 
 }client.prototype.__proto__ = events.EventEmitter.prototype;
 
