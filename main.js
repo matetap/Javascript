@@ -22,17 +22,21 @@ var timer = setInterval(
   }
 ,1000);
 
+
 //function for generate random indeteger between low and high
 function rand(low, high) {
      return Math.floor(Math.random() * (high - low + 1) + low);
 }
 
+
 //some cosntant parameter
 const nbClient = 2;
-const nbresto = 2;
+const nbRestaurants = 2;
+
 
 //The programme is starting
 console.log(chalk.blue("Debut du programme"));
+
 
 //define the actor of this program
 var Rungis;
@@ -40,32 +44,92 @@ var listRestaurants = [];
 var listClients = [];
 
 
+//define the seller object
+function seller(){
+  events.EventEmitter.call(this);
+}seller.prototype.__proto__ = events.EventEmitter.prototype;
 
 
+//define the restaurants object
+function restaurant(amOp,amCl,pmOp,pmCl){
+  events.EventEmitter.call(this);
+
+  this.isOpen = function(){
+    if((globalTime>amOp && globalTime < amCl)||(globalTime>pmOp && globalTime < pmCl) ){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+}restaurant.prototype.__proto__ = events.EventEmitter.prototype;
+
+
+//define the client object
 function client() {
   events.EventEmitter.call(this);
 
-  this.on('open', function() {
-      console.log('ring ring ring');
+  this.findRestaurants = function () {
+    var choice = rand(0,listRestaurants.length-1);
+    console.log(chalk.green("choice ", choice));
+
+    if(!listRestaurants[choice].isOpen()){
+      console.log(chalk.green("Not open. i wait 10min "));
+      setTimeout(function () {
+          console.log(chalk.green("Not open. i wait 10min "));
+          this.emit('hungry');
+      }, 1000);
+    }else{
+      console.log(chalk.green("Open !"));
+    }
+
+  }
+
+  this.on('hungry', function () {
+    this.findRestaurants();
   });
 
 }client.prototype.__proto__ = events.EventEmitter.prototype;
 
 
+//initialise the seller
+Rungis = new seller();
+//initialise the restaurants
 for (var i = 0; i < nbClient; i++) {
+    listRestaurants[i] = new restaurant(11,15,18,23);
+}
+//initialise the client
+for (var i = 0; i < nbRestaurants; i++) {
     listClients[i] = new client();
 }
 
-for (var i = 0; i < nbClient; i++) {
-    listClients[i].emit('open');
+//start the game
+for (var i = 0; i < 1; i++) {
+    console.log(chalk.green("Set client ",i," hungry"));
+    listClients[i].emit('hungry');
 }
 
 
 
 
 
+/*
+//Le client choisi un restorant
+resto_voulu = listclients[0].findResto();
+console.log("choisi le resto :", chalk.blue(resto_voulu));
 
-
+//Le client essaye de rentrer dans le restorant
+  if (!listResto[resto_voulu].isOpen()){
+    console.log(chalk.red("client 0 n'a pas pu rentrer dans le restaurant", resto_voulu,", il attend 10min"));
+    setTimeout(function () {
+      eventEmitter.emit('try_enter');
+    }, 1000);
+  }else{
+    console.log(chalk.green("client 0 rentre dans le restaurant", resto_voulu));
+    //une fois dedans il commande
+    listResto[resto_voulu].makeMeSandwitch('food_ready');
+    console.log(chalk.green("j'attedn ma bouffe"));
+  }*/
 
 
 
