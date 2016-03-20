@@ -1,0 +1,23 @@
+{
+  "name": "tp_node_js",
+  "version": "1.0.0",
+  "description": "TP Javascript ESME Sudria 2C",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patoninho1/Javascript.git"
+  },
+  "keywords": [
+    "node",
+    "js"
+  ],
+  "author": "Samy & Alexis",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patoninho1/Javascript/issues"
+  },
+  "homepage": "https://github.com/patoninho1/Javascript#readme"
+}
