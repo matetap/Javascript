@@ -22,6 +22,7 @@
   "homepage": "https://github.com/patoninho1/Javascript#readme",
   "dependencies": {
     "bluebird": "^3.3.4",
+    "chalk": "^1.1.1",
     "grunt": "^0.4.5",
     "winston": "^2.2.0"
   },

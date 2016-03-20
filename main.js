@@ -1,12 +1,15 @@
 //Dependance
 'use strict';
-var Promise = require("bluebird");
-var Promise = require("grunt");
-var Promise = require("winston");
 const electron = require('electron');
 
-console.log("Debut du programme");
+var Promise = require("bluebird");
+var Promise = require("grunt");
+//var Promise = require("winston");
+var chalk = require('chalk');
 
+console.log(chalk.blue("Debut du programme"));
+
+/*
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 
@@ -20,7 +23,7 @@ function createWindow () {
 
   //a la fermeture de la fenetre
   mainWindow.on('closed', function() {
-    console.log("windows closed");
+    chalk.red("windows closed");
     mainWindow = null;
   });
 
@@ -28,7 +31,7 @@ function createWindow () {
 
 //s'execute quand on ferme le'app'
 app.on('window-all-closed', function () {
-  console.log("App closed");
+  chalk.red("App closed");
   setTimeout(function(){
   clearTimeout(timer);
   console.log("timer removed");
@@ -40,7 +43,7 @@ app.on('window-all-closed', function () {
 
 //Pour garder la fenetre vivante
 app.on('activate', function () {
-  console.log("windows is alive !");
+  chalk.green("windows is alive !");
   if (mainWindow === null) {
     createWindow();
   }
@@ -49,9 +52,9 @@ app.on('activate', function () {
 
 //appelle createWindow lorsque la fenetre est prette
 app.on('ready', createWindow);
-
+*/
 //Test timer
 var timer = setInterval(
 function tic(){
-console.log("tic");
+console.log(chalk.blue("tic"));
 },1000);
