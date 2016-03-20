@@ -69,25 +69,20 @@ function restaurant(amOp,amCl,pmOp,pmCl){
 function client() {
   events.EventEmitter.call(this);
 
-  this.findRestaurants = function () {
-    var choice = rand(0,listRestaurants.length-1);
-    console.log(chalk.green("choice ", choice));
+    this.on('hungry', function () {
 
-    if(!listRestaurants[choice].isOpen()){
-      console.log(chalk.green("Not open. i wait 10min "));
-      setTimeout(function () {
-          console.log(chalk.green("Not open. i wait 10min "));
-          this.emit('hungry');
-      }, 1000);
-    }else{
-      console.log(chalk.green("Open !"));
-    }
+      var choice = rand(0,listRestaurants.length-1);
+      console.log(chalk.green("choice ", choice));
 
-  }
+      if(!listRestaurants[choice].isOpen()){
+        console.log(chalk.red("Not open. i wait 10min "));
+        setTimeout(this.emit.bind(this, 'hungry'), 1000);
 
-  this.on('hungry', function () {
-    this.findRestaurants();
-  });
+      }else{
+        console.log(chalk.green("Open !"));
+      }
+
+    });
 
 }client.prototype.__proto__ = events.EventEmitter.prototype;
 
@@ -104,7 +99,7 @@ for (var i = 0; i < nbRestaurants; i++) {
 }
 
 //start the game
-for (var i = 0; i < 1; i++) {
+for (var i = 0; i < nbClient; i++) {
     console.log(chalk.green("Set client ",i," hungry"));
     listClients[i].emit('hungry');
 }
@@ -114,6 +109,31 @@ for (var i = 0; i < 1; i++) {
 
 
 /*
+
+this.findRestaurants = function () {
+
+
+
+
+  var choice = rand(0,listRestaurants.length-1);
+  console.log(chalk.green("choice ", choice));
+
+  if(!listRestaurants[choice].isOpen()){
+    console.log(chalk.green("Not open. i wait 10min "));
+    setTimeout(function () {
+        console.log(chalk.green("Not open. i wait 10min "));
+        this.emit('hungry');
+    }, 1000);
+  }else{
+    console.log(chalk.green("Open !"));
+  }
+
+}
+
+
+
+
+
 //Le client choisi un restorant
 resto_voulu = listclients[0].findResto();
 console.log("choisi le resto :", chalk.blue(resto_voulu));
