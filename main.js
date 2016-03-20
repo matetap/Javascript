@@ -26,12 +26,13 @@ function createWindow () {
 
 }
 
-//appelle createWindow lorsque la fenetre est prette
-app.on('ready', createWindow);
-
 //s'execute quand on ferme le'app'
 app.on('window-all-closed', function () {
   console.log("App closed");
+  setTimeout(function(){
+  clearTimeout(timer);
+  console.log("timer removed");
+  },1000);
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -44,3 +45,13 @@ app.on('activate', function () {
     createWindow();
   }
 });
+
+
+//appelle createWindow lorsque la fenetre est prette
+app.on('ready', createWindow);
+
+//Test timer
+var timer = setInterval(
+function tic(){
+console.log("tic");
+},1000);
