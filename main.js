@@ -10,20 +10,135 @@ var chalk = require('chalk');
 console.log(chalk.blue("Debut du programme"));
 
 
+/*
 //Horloge qui appel une focntion a chaque heure
 var globalTime = 0;
 var timer = setInterval(
   function updateTime(){
     console.log(chalk.blue("tic",globalTime));
     if (globalTime < 23){
-      globalTime++;
+      globalTime+=1;
     }else{
       globalTime=0;
     }
   }
 ,1000);
 
+*/
+function rand(low, high) {
+    return Math.random() * (high - low) + low;
+}
 
+
+
+const nbClient = 1;
+const nbresto = 2;
+var listClients = [];
+var listResto = [];
+
+
+
+var client = function(){
+
+  this.findResto = function (){
+    return listResto[rand(0,listResto.length)]
+  }
+
+  this.findResto = function (){
+
+  }
+
+}
+
+
+var resto = function(){
+
+}
+
+
+var listclients = [];
+for (var i = 0; i < nbClient; i++) {
+    listclients[i] = new client();
+}
+
+var listResto = [];
+for (var i = 0; i < nbresto; i++) {
+    listResto[i] = new resto();
+}
+
+
+
+/*
+var events = require('events');
+var eventEmitter = new events.EventEmitter();
+
+var connectHandler = function connected(){
+  console.log('connection reussie');
+  eventEmitter.emit('connected');
+}
+
+eventEmitter.on('connection',connectHandler);
+
+eventEmitter.on('connection',function(){
+  console.log('donnee bien recue');
+});
+
+eventEmitter.emit('connection');
+console.log('fini');
+*/
+
+
+
+
+
+
+/*
+
+var produit = 0;
+
+function appel_producteur(){
+    producteur.next();
+}
+
+function* p(){
+  var compteur = 0;
+  while(true){
+    compteur++;
+    produit = compteur;
+    console.log("production " + produit);
+    setTimeout(appel_consomateur,0);
+    yield null;
+  }
+}
+
+
+function appel_consomateur(){
+  consomateur.next();
+}
+
+function* c(){
+  while(true){
+    console.log("consomation "+produit);
+    setTimeout(appel_producteur,0);
+    yield null;
+  }
+}
+
+var producteur = p();
+var consomateur = c();
+producteur.next();
+*/
+
+
+
+
+
+
+
+
+
+
+/*
 var marche =(function(op,cl){
 
   marche.isopen = function(){
@@ -90,7 +205,7 @@ var Rungis = new marche(11,15,18,23);
 var Resto = new restaurant(11,15,18,23);
 var Cli = new client;
 
-
+*/
 
 
 
