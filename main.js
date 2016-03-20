@@ -1,6 +1,6 @@
 var Promise = require("bluebird");
 var Promise = require("grunt");
-var Promise = require("Winston");
+var Promise = require("winston");
 var http = require("http");
 
 function onRequest(request, response) {
