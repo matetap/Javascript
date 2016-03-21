@@ -1,0 +1,18 @@
+body {
+  color: #424242;
+  background-color: #CECEF6;
+}
+
+.timer{
+  color: green;
+  margin-bottom: : -30px;
+  position:absolute;
+  right: 30px;
+}
+
+.actor{
+  margin: 10px;
+  border : solid 1px black;
+  display:inline;
+  display: block;
+}
