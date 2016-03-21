@@ -15,4 +15,5 @@ body {
   border : solid 1px black;
   display:inline;
   display: block;
+  padding:10px;
 }

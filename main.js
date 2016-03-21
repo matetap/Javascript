@@ -16,7 +16,7 @@ let mainWindow;
 function createWindow () {
 
   console.log(chalk.green("window started"));
-  mainWindow = new BrowserWindow({width: 800, height: 600});
+  mainWindow = new BrowserWindow({width: 600, height: 800});
   mainWindow.loadURL('file://' + __dirname + '/index.html');
   mainWindow.webContents.openDevTools();
 

@@ -73,7 +73,7 @@ function seller(tmp_id,op,cl) {
 
   //When somone want to buy us food, it take betwen 0h15 and 1h15
   this.buy = function(){
-    return rand(15,115);
+    return rand(150,1150);
   }
 
   //Internal loop of seller
@@ -120,6 +120,12 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
     return open;
   }
 
+  //When somone want to buy us food, it take betwen 0h05 and 0h50
+  this.buy = function(){
+    food--;
+    return rand(50,500);
+  }
+
   //Internal loop of restaurant
   this.on('loop', function () {
 
@@ -162,6 +168,7 @@ function client(tmp_id) {
 
   //State of the client
   var hungry=true
+  var waitResit = 300;
 
   //Internal loop of client
   this.on('loop', function () {
@@ -180,7 +187,16 @@ function client(tmp_id) {
         //if it's, go in
         document.getElementById("client"+id).innerHTML += ('<br>'+'Open ! i ask for food');
         document.getElementById("client"+id).style.backgroundColor = 'green';
-        //listRestaurants[choice].makeMeSandwitch(this);
+        //Buy food !
+        var waitingTime = listRestaurants[choice].buy();
+        document.getElementById("client"+id).innerHTML += ('buying food at restaurant n°',choice,' waiting ',waitingTime,' <br>');
+        if (waitingTime>waitResit){
+          document.getElementById("client"+id).innerHTML += ('It is more than my wait resist <br>');
+        }
+        setTimeout(function(){
+          document.getElementById("client"+id).innerHTML += ('I have eat !<br>');
+          hungry = false;
+        },waitingTime);
       }
 
     }else{
