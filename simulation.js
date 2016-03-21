@@ -52,6 +52,7 @@ function start(){
     }
   ,50);
 
+  //initialise the game
   init_actor();
 }
 
@@ -62,6 +63,7 @@ function seller(tmp_id,op,cl) {
 
   //id for the seller instance
   var id = tmp_id;
+  //State of the store
   var open = false;
 
   //Is the store open at this time ?
@@ -69,17 +71,22 @@ function seller(tmp_id,op,cl) {
     return open;
   }
 
+  //When somone want to buy us food, it take betwen 0h15 and 1h15
   this.buy = function(){
     return rand(15,115);
   }
 
+  //Internal loop of seller
   this.on('loop', function () {
 
+    //Is it time to open ?
     document.getElementById("seller"+id).innerHTML = ('Rungis<br>');
     if(globalTime>op && globalTime < cl){
+      //Open
       document.getElementById("seller"+id).style.backgroundColor = 'green';
       open = true;
     }else{
+      //Close
       document.getElementById("seller"+id).style.backgroundColor = 'red';
       open = false;
     }
@@ -105,6 +112,7 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
 
   //Food stock
   var food = 0;
+  //State of the store
   var open = false
 
   //Is the store open at this time ? has it food ?
@@ -112,20 +120,26 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
     return open;
   }
 
+  //Internal loop of restaurant
   this.on('loop', function () {
 
+    //is it time to open the store ? Have we food to sell ?
     document.getElementById("restaurant"+id).innerHTML = ('restaurant n°'+id+'<br>Food stock : '+food+'<br>');
     if((food > 0)&&((globalTime>amOp && globalTime < amCl)||(globalTime>pmOp && globalTime < pmCl))){
+      //Yes, open
       document.getElementById("restaurant"+id).style.backgroundColor = 'green';
       open = true;
     }else{
+      //No close
       document.getElementById("restaurant"+id).style.backgroundColor = 'red';
       open = false;
+      //We dont have food
       if(food<1){
         document.getElementById("restaurant"+id).innerHTML += ('Out of food<br>');
+        //Can we buy it at rungis at this time ?
         if (rungis.isOpen()){
           document.getElementById("restaurant"+id).style.backgroundColor = 'blue';
-
+          //Buy it !
           var waitingTime = rungis.buy();
           document.getElementById("restaurant"+id).innerHTML += ('buying food at Rungis, waiting ',waitingTime,' <br>');
           setTimeout(food +=10,waitingTime);
@@ -146,8 +160,10 @@ function client(tmp_id) {
   //id for the client instance
   var id=tmp_id;
 
+  //State of the client
   var hungry=true
 
+  //Internal loop of client
   this.on('loop', function () {
 
     if (hungry){
@@ -198,7 +214,7 @@ function init_actor() {
       listClients[i] = new client(i);
   }
 
-  //start the game
+  //start the internal loop of every actor of the simulation
   rungis.emit('loop');
   for (var i = 0; i < nbRestaurants; i++) {
       listRestaurants[i].emit('loop');
