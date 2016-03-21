@@ -114,6 +114,11 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
   var food = 0;
   //State of the store
   var open = false
+  //Score of this restaurant
+  var score = 0;
+  this.upScore = function(bonus){
+    score +=bonus;
+  }
 
   //Is the store open at this time ? has it food ?
   this.isOpen = function(){
@@ -130,7 +135,7 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
   this.on('loop', function () {
 
     //is it time to open the store ? Have we food to sell ?
-    document.getElementById("restaurant"+id).innerHTML = ('restaurant n°'+id+'<br>Food stock : '+food+'<br>');
+    document.getElementById("restaurant"+id).innerHTML = ('restaurant n°'+id+'<br>Food stock : '+food+'<br>Score : '+score+'<br>');
     if((food > 0)&&((globalTime>amOp && globalTime < amCl)||(globalTime>pmOp && globalTime < pmCl))){
       //Yes, open
       document.getElementById("restaurant"+id).style.backgroundColor = 'green';
@@ -193,10 +198,16 @@ function client(tmp_id) {
         if (waitingTime>waitResit){
           document.getElementById("client"+id).innerHTML += ('It is more than my wait resist <br>');
         }
-        setTimeout(function(){
-          document.getElementById("client"+id).innerHTML += ('I have eat !<br>');
-          hungry = false;
-        },waitingTime);
+        if (waitingTime<(waitResit-10)){
+          listRestaurants[choice].upScore(2);
+        }else if (waitingTime<(waitResit+5)){
+            listRestaurants[choice].upScore(1);
+        }
+
+        document.getElementById("client"+id).innerHTML += ('I have eat !<br>');
+        hungry = true;
+        setTimeout(this.emit.bind(this, 'loop'), waitingTime);
+
       }
 
     }else{
