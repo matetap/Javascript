@@ -276,9 +276,9 @@ function client(tmp_id) {
         document.getElementById("client"+id).style.backgroundColor = 'green';
 
         //choice a menu
-        var tmp = rand(0,2);
+        var tmp = rand(0,listMenu.length-1);
         while(!listRestaurants[choice].isAvailable(listMenu[tmp])){
-          tmp = rand(0,2);
+          tmp = rand(0,listMenu.length-1);
         }
 
         var waitingTime = listRestaurants[choice].makeFood(listMenu[tmp]);
@@ -340,121 +340,3 @@ function init_actor() {
   }
 
 }
-
-
-
-
-
-
-
-/*
-
-//define the client object
-function seller() {
-  events.EventEmitter.call(this);
-
-}seller.prototype.__proto__ = events.EventEmitter.prototype;
-
-
-//define the client object
-function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
-  events.EventEmitter.call(this);
-
-  //id for the client instance
-  var id=tmp_id;
-  var amOp=tmp_amOp;
-  var amCl=tmp_amCl;
-  var pmOp=tmp_pmOp;
-  var pmCl=tmp_pmCl;
-
-  //Food stock
-  var food = 0;
-
-  //Is the store open at this time ? has it food ?
-  this.isOpen = function(){
-    if((globalTime>amOp && globalTime < amCl)||(globalTime>pmOp && globalTime < pmCl) ){
-      if (food < 1){
-        console.log(chalk.red("sorry sir open but there is no food here.. "));
-        getfood();
-        return false;
-      }
-      return true;
-    }else{
-      return false;
-    }
-  }
-
-  this.makeMeSandwitch = function(client){
-      if (food<1){
-        getfood();
-      }
-      setTimeout(client.emit.bind(client, 'foodready'), rand(500,5000));
-  }
-
-}restaurant.prototype.__proto__ = events.EventEmitter.prototype;
-
-
-//define the client object
-function client(tmp_id) {
-  events.EventEmitter.call(this);
-
-  //id for the client instance
-  var id=tmp_id;
-
-  //event client hungry
-  this.on('hungry', function () {
-
-    //we randomly choice one of the restaurant
-    var choice = rand(0,listRestaurants.length-1);
-    document.getElementById("client"+id).innerHTML = ('Client n°'+id+'<br>'+'Choice restaurant n°'+choice);
-    document.getElementById("client"+id).style.backgroundColor = 'red';
-
-    //and look if it is open
-    if(!listRestaurants[choice].isOpen()){
-      //if it's not, wait 10min
-      console.log(chalk.red("Not open or no food, i wait 10min "));
-      setTimeout(this.emit.bind(this, 'hungry'), 1000);
-    }else{
-      //if it's, go in
-      console.log(chalk.green("Open ! i ask for food"));
-      document.getElementById("client"+id).innerHTML = ('Client n°'+id+'<br>'+'Choice restaurant n°'+choice);
-      document.getElementById("client"+id).style.backgroundColor = 'red';
-      listRestaurants[choice].makeMeSandwitch(this);
-    }
-
-  });
-
-}client.prototype.__proto__ = events.EventEmitter.prototype;
-
-
-//Instance of the used object
-var rungis;
-var listRestaurants = [];
-var listClients = [];
-
-
-//initialise the object of the simulation
-function init_actor() {
-
-  //initialise the seller
-  rungis = new seller();
-
-  //initialise the restaurants
-  for (var i = 0; i < nbRestaurants; i++) {
-      listRestaurants[i] = new restaurant(11,15,18,23);
-  }
-
-  //initialise the client
-  for (var i = 0; i < nbClient; i++) {
-      listClients[i] = new client(i);
-      //console.log(listClients[i].id);
-  }
-
-  //start the game
-  for (var i = 0; i < nbClient; i++) {
-      listClients[i].emit('hungry');
-  }
-
-}
-
-*/
