@@ -48,13 +48,6 @@ function start(){
   nbClient = document.getElementById("input_nb_client").value;
   nbRestaurants = document.getElementById("input_nb_restaurant").value;
 
-  var food = {
-    chiken:0,
-    potato:0,
-    steak:0,
-    salad:0
-  };
-
   var menu1 = {
     chiken:1,
     potato:1,
@@ -76,18 +69,16 @@ function start(){
     salad:1
   };
 
-  //listMenu = new array();
+  listMenu = [];
   if(document.getElementById('menu1').checked){
-    //listMenu.push(menu1);
+    listMenu.push(menu1);
   }
   if(document.getElementById('menu2').checked){
-    //listMenu.push(menu2);
+    listMenu.push(menu2);
   }
   if(document.getElementById('menu3').checked){
-    //listMenu.push(menu3);
+    listMenu.push(menu3);
   }
-
-  console.log(listMenu);
 
   //Make the div for the actor of the simulation
   var html="";
@@ -173,7 +164,13 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
   var pmCl=tmp_pmCl;
 
   //Food stock
-  var food = 0;
+  var stock = {
+    chiken:0,
+    potato:0,
+    steak:0,
+    salad:0
+  }
+
   //State of the store
   var open = false
   //Score of this restaurant
@@ -188,17 +185,39 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
   }
 
   //When somone want to buy us food, it take betwen 0h05 and 0h50
-  this.makeFood = function(){
-    food--;
+  this.makeFood = function(menu){
+    stock.chiken -= menu.chiken;
+    stock.potato -= menu.potato;
+    stock.steak -= menu.steak;
+    stock.salad -= menu.salad;
     return rand(timings.makeFoodMin,timings.makeFoodMax);
+  }
+
+  function buyfood(size){
+    stock.chiken +=size;
+    stock.potato +=size;
+    stock.steak +=size;
+    stock.salad +=size;
+  }
+
+  this.isAvailable = function(menu){
+    if(stock.chiken >= menu.chiken){
+      if(stock.potato >= menu.potato){
+        if(stock.steak >= menu.steak){
+          if(stock.salad >= menu.salad){
+            return true;
+          }
+        }
+      }
+    }
   }
 
   //Internal loop of restaurant
   this.on('loop', function () {
 
-    //is it time to open the store ? Have we food to sell ?
-    document.getElementById("restaurant"+id).innerHTML = ('restaurant n°'+id+'<br>Food stock : '+food+'<br>Score : '+score+'<br>');
-    if((food > 0)&&((globalTime>amOp && globalTime < amCl)||(globalTime>pmOp && globalTime < pmCl))){
+    //is it time to open the store ? Have we food for make 1 menu ?
+    document.getElementById("restaurant"+id).innerHTML = ('restaurant n°'+id+'<br>Food stock (chiken,potato,steak,salad):<br>'+stock.chiken+','+stock.potato+','+stock.steak+','+stock.salad+'<br>Score : '+score+'<br>');
+    if((stock.salad>0 || stock.chiken>0 ) && ((globalTime>amOp && globalTime < amCl)||(globalTime>pmOp && globalTime < pmCl))){
       //Yes, open
       document.getElementById("restaurant"+id).style.backgroundColor = 'green';
       open = true;
@@ -207,7 +226,8 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
       document.getElementById("restaurant"+id).style.backgroundColor = 'red';
       open = false;
       //We dont have food
-      if(food<1){
+
+      if(stock.salad<1 && stock.chiken<1 ){
         document.getElementById("restaurant"+id).innerHTML += ('Out of food<br>');
         //Can we buy it at rungis at this time ?
         if (rungis.isOpen()){
@@ -215,7 +235,7 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
           //Buy it !
           var waitingTime = rungis.buy();
           document.getElementById("restaurant"+id).innerHTML += ('buying food at Rungis, waiting ',waitingTime,' <br>');
-          setTimeout(food +=10,waitingTime);
+          setTimeout(buyfood(10),waitingTime);
        }
       }
     }
@@ -254,8 +274,15 @@ function client(tmp_id) {
         //if it's, go in
         document.getElementById("client"+id).innerHTML += ('<br>'+'Open ! i ask for food');
         document.getElementById("client"+id).style.backgroundColor = 'green';
-        //Buy food !
-        var waitingTime = listRestaurants[choice].makeFood();
+
+        //choice a menu
+        var tmp = rand(0,2);
+        while(!listRestaurants[choice].isAvailable(listMenu[tmp])){
+          tmp = rand(0,2);
+        }
+
+        var waitingTime = listRestaurants[choice].makeFood(listMenu[tmp]);
+
         document.getElementById("client"+id).innerHTML += ('buying food at restaurant n°',choice,' waiting ',waitingTime,' <br>');
         if (waitingTime>waitResit){
           document.getElementById("client"+id).innerHTML += ('It is more than my wait resist <br>');
