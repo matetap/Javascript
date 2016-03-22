@@ -32,6 +32,7 @@ const minInOnehour = 100;
 var nbClient;
 var nbRestaurants;
 var globalTime;
+var listMenu;
 
 
 //function for generate random indeteger between low and high
@@ -46,6 +47,47 @@ function start(){
   //Get the previous value
   nbClient = document.getElementById("input_nb_client").value;
   nbRestaurants = document.getElementById("input_nb_restaurant").value;
+
+  var food = {
+    chiken:0,
+    potato:0,
+    steak:0,
+    salad:0
+  };
+
+  var menu1 = {
+    chiken:1,
+    potato:1,
+    steak:0,
+    salad:0
+  };
+
+  var menu2 = {
+    chiken:0,
+    potato:0,
+    steak:1,
+    salad:1
+  };
+
+  var menu3 = {
+    chiken:0,
+    potato:0,
+    steak:0,
+    salad:1
+  };
+
+  //listMenu = new array();
+  if(document.getElementById('menu1').checked){
+    //listMenu.push(menu1);
+  }
+  if(document.getElementById('menu2').checked){
+    //listMenu.push(menu2);
+  }
+  if(document.getElementById('menu3').checked){
+    //listMenu.push(menu3);
+  }
+
+  console.log(listMenu);
 
   //Make the div for the actor of the simulation
   var html="";

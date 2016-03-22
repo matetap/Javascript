@@ -3,9 +3,19 @@ body {
   background-color: #CECEF6;
 }
 
+#parameter{
+  padding: 20px;
+  margin : auto;
+  margin-top : 50px;
+  width :400px;
+  background-color: #8181F7;
+  border : solid 1px black;
+}
+
 .timer{
+  margin-top: 20px;
   color: green;
-  margin-bottom: : -30px;
+  margin-bottom: -20px;
   position:absolute;
   right: 30px;
 }
