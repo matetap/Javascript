@@ -8,12 +8,19 @@
   </head>
   <body>
     <center>
-    <form style="margin-top:50px; width:400px; height:180px; border : solid 1px black;">
+    <form style="margin-top:50px; width:400px; height:280px; border : solid 1px black;">
       <center><br><br>
        Number of Clients :
        <input type="number" name="nbclient" id="input_nb_client" value="1" min="1" max="10"><br><br>
        Number of restaurants :
        <input type="number" name="nbrestaurant" id="input_nb_restaurant" value="1" min="1" max="10"><br><br>
+
+       <b>Available food in earch restaurants :</b><br><br>
+       <input type="checkbox" name="menu1" value="chikenFried">Chiken & Fried (Use 1 chiken and 1 potato).<br>
+       <input type="checkbox" name="menu2" value="steakVegeteable">Steak & Vegeteable (Use 1 steak and 1 salade).<br>
+       <input type="checkbox" name="menu3" value="salad">Salad (Use 1 salad and 1 potato).<br>
+       <br>
+
        <input type="button" onclick="start()" value="Generate">
      </center>
      </form>

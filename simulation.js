@@ -1,12 +1,32 @@
 //Dependances
 'use strict';
 const electron = require('electron');
-var Promise = require("bluebird");
-var Promise = require("grunt");
-//var Promise = require("winston");
 var chalk = require('chalk');
 var events = require('events');
 var eventEmitter = new events.EventEmitter();
+
+
+//Set constant value
+const msForOneHour = 1000;
+const timings = {
+  hour : msForOneHour ,
+  buyFoodMin : 0.15 * msForOneHour ,
+  buyFoodMax : 1.15 * msForOneHour,
+  makeFoodMin : 0.05 * msForOneHour ,
+  makeFoodMax : 0.5 * msForOneHour,
+  clientWait : 0.1 * msForOneHour,
+  clientResistMin : 0.1 * msForOneHour,
+  clientResistMax : 0.4 * msForOneHour,
+  eventLoopTic : 0.01 * msForOneHour,
+  tenMin : 0.1 * msForOneHour,
+  fiveMin : 0.05 * msForOneHour,
+  oneMin : 0.01 * msForOneHour,
+  oneDay : 24 * msForOneHour
+};
+const hourInOneDay = 24;
+const minInOnehour = 100;
+
+
 
 //some global parameter
 var nbClient;
@@ -43,14 +63,14 @@ function start(){
   globalTime = 0;
   var timer = setInterval(
     function updateTime(){
-      document.getElementById("time").innerHTML = ("Curent time : " + Math.floor((globalTime/100)) + " h " + (globalTime -(Math.floor((globalTime/100))*100)) +" min");
-      if (globalTime < 2400){
+      document.getElementById("time").innerHTML = ("Curent time : " + Math.floor((globalTime/minInOnehour)) + " h " + (globalTime -(Math.floor((globalTime/minInOnehour))*minInOnehour)) +" min");
+      if (globalTime < hourInOneDay*minInOnehour){
         globalTime+=1;
       }else{
         globalTime=0;
       }
     }
-  ,50);
+  ,timings.oneMin);
 
   //initialise the game
   init_actor();
@@ -73,7 +93,7 @@ function seller(tmp_id,op,cl) {
 
   //When somone want to buy us food, it take betwen 0h15 and 1h15
   this.buy = function(){
-    return rand(150,1150);
+    return rand(timings.buyFoodMin,timings.buyFoodMax);
   }
 
   //Internal loop of seller
@@ -91,7 +111,7 @@ function seller(tmp_id,op,cl) {
       open = false;
     }
 
-    setTimeout(this.emit.bind(this, 'loop'), 100);
+    setTimeout(this.emit.bind(this, 'loop'), timings.eventLoopTic);
   });
 
 }seller.prototype.__proto__ = events.EventEmitter.prototype;
@@ -126,9 +146,9 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
   }
 
   //When somone want to buy us food, it take betwen 0h05 and 0h50
-  this.buy = function(){
+  this.makeFood = function(){
     food--;
-    return rand(50,500);
+    return rand(timings.makeFoodMin,timings.makeFoodMax);
   }
 
   //Internal loop of restaurant
@@ -158,7 +178,7 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
       }
     }
 
-    setTimeout(this.emit.bind(this, 'loop'), 100);
+    setTimeout(this.emit.bind(this, 'loop'), timings.eventLoopTic);
   });
 
 }restaurant.prototype.__proto__ = events.EventEmitter.prototype;
@@ -173,7 +193,7 @@ function client(tmp_id) {
 
   //State of the client
   var hungry=true
-  var waitResit = 300;
+  var waitResit = rand(timings.clientResistMin,timings.clientResistMax);
 
   //Internal loop of client
   this.on('loop', function () {
@@ -187,20 +207,20 @@ function client(tmp_id) {
       if(!listRestaurants[choice].isOpen()){
         //if it's not, wait 10min
         document.getElementById("client"+id).innerHTML += ('<br>'+'Not open or no food, i wait 10min');
-        setTimeout(this.emit.bind(this, 'loop'), 1000);
+        setTimeout(this.emit.bind(this, 'loop'), timings.clientWait);
       }else{
         //if it's, go in
         document.getElementById("client"+id).innerHTML += ('<br>'+'Open ! i ask for food');
         document.getElementById("client"+id).style.backgroundColor = 'green';
         //Buy food !
-        var waitingTime = listRestaurants[choice].buy();
+        var waitingTime = listRestaurants[choice].makeFood();
         document.getElementById("client"+id).innerHTML += ('buying food at restaurant n°',choice,' waiting ',waitingTime,' <br>');
         if (waitingTime>waitResit){
           document.getElementById("client"+id).innerHTML += ('It is more than my wait resist <br>');
         }
-        if (waitingTime<(waitResit-10)){
+        if (waitingTime<(waitResit-timings.tenMin)){
           listRestaurants[choice].upScore(2);
-        }else if (waitingTime<(waitResit+5)){
+        }else if (waitingTime<(waitResit+timings.fiveMin)){
             listRestaurants[choice].upScore(1);
         }
 
@@ -211,7 +231,7 @@ function client(tmp_id) {
       }
 
     }else{
-      setTimeout(this.emit.bind(this, 'loop'), 100);
+      setTimeout(this.emit.bind(this, 'loop'), timings.eventLoopTic);
     }
 
   });
