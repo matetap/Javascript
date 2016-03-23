@@ -178,7 +178,7 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
   //Score of this restaurant
   var score = 0;
   this.upScore = function(bonus){
-    score +=bonus*(hourInOneDay-((amCl-amOp)+(pmCl-pmOp)));
+    score +=bonus*( hourInOneDay-(((amCl-amOp)+(pmCl-pmOp))/minInOnehour) );
   }
 
   //Is the store open at this time ? has it food ?
@@ -335,9 +335,16 @@ function init_actor() {
   //initialise the restaurants
   for (var i = 0; i < nbRestaurants; i++) {
       var amOp = rand(0,(hourInOneDay/2)-1);
-      var amCl = rand(amOp,hourInOneDay/2);
+      var amCl = amOp;
+      while (amCl==amOp){
+        amCl = rand(amOp,hourInOneDay/2);
+      }
+
       var pmOp = rand(hourInOneDay/2,(hourInOneDay-1));
-      var pmCl = rand(pmOp,hourInOneDay);
+      var pmCl =pmOp
+      while (pmCl==pmOp){
+         pmCl = rand(pmOp,hourInOneDay);
+      }
       listRestaurants[i] = new restaurant(i,amOp*minInOnehour,amCl*minInOnehour,pmOp*minInOnehour,pmCl*minInOnehour);
   }
 
