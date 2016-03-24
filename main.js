@@ -16,7 +16,7 @@ function createWindow () {
   mainWindow.loadURL('file://' + __dirname + '/index.html');
   mainWindow.webContents.openDevTools();
 
-  //what to do when the windows is close
+  //what to do when the window(s) is close
   mainWindow.on('closed', function() {
     console.log(chalk.red("window closed"));
     mainWindow = null;
@@ -24,7 +24,7 @@ function createWindow () {
 
 }
 
-//What to do when the app is close
+//What to do when the app is closed
 app.on('window-all-closed', function () {
   console.log(chalk.red("App closed"));
   if (process.platform !== 'darwin') {
@@ -32,7 +32,7 @@ app.on('window-all-closed', function () {
   }
 });
 
-//for keep alive the windows on MAC_OS system
+//to keep alive the window on MAC_OS system
 app.on('activate', function () {
   console.log(chalk.green("windows is alive !"));
   if (mainWindow === null) {
