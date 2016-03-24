@@ -49,21 +49,21 @@ function start(){
   nbRestaurants = document.getElementById("input_nb_restaurant").value;
 
   var menu1 = {
-    chiken:1,
+    chicken:1,
     potato:1,
     steak:0,
     salad:0
   };
 
   var menu2 = {
-    chiken:0,
+    chicken:0,
     potato:0,
     steak:1,
     salad:1
   };
 
   var menu3 = {
-    chiken:0,
+    chicken:0,
     potato:0,
     steak:0,
     salad:1
@@ -146,7 +146,7 @@ function seller(tmp_id,op,cl) {
       //Closed
       document.getElementById("seller"+id).style.backgroundColor = 'red';
       open = false;
-      console.log("Rungis is now close");
+      console.log("Rungis is now closed");
     }
 
     if(!stop){
@@ -178,7 +178,7 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
 
   //Food stock
   var stock = {
-    chiken:0,
+    chicken:0,
     potato:0,
     steak:0,
     salad:0
@@ -200,7 +200,7 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
 
   //When someone wants to order us food, it take betwen 0h05 and 0h50
   this.makeFood = function(menu){
-    stock.chiken -= menu.chiken;
+    stock.chicken -= menu.chicken;
     stock.potato -= menu.potato;
     stock.steak -= menu.steak;
     stock.salad -= menu.salad;
@@ -208,14 +208,14 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
   }
 
   function buyfood(size){
-    stock.chiken +=size;
+    stock.chicken +=size;
     stock.potato +=size;
     stock.steak +=size;
     stock.salad +=size;
   }
 
   this.isAvailable = function(menu){
-    if(stock.chiken >= menu.chiken){
+    if(stock.chicken >= menu.chicken){
       if(stock.potato >= menu.potato){
         if(stock.steak >= menu.steak){
           if(stock.salad >= menu.salad){
@@ -230,29 +230,29 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
   this.on('loop', function () {
 
     //is it time to open the store ? Have we food to cook 1 menu ?
-    document.getElementById("restaurant"+id).innerHTML = ('restaurant n°'+id+'<br>Food stock (chiken,potato,steak,salad):<br>'+stock.chiken+','+stock.potato+','+stock.steak+','+stock.salad+'<br>My hour : '+amOp/100+ ' to ' +amCl/100 + ' and ' +pmOp/100 +' to '+pmCl/100 +'<br>Score : '+score+'<br>');
-    if((stock.salad>0 || stock.chiken>0 ) && ((globalTime>amOp && globalTime < amCl)||(globalTime>pmOp && globalTime < pmCl))){
+    document.getElementById("restaurant"+id).innerHTML = ('restaurant n°'+id+'<br>Food stock (chicken,potato,steak,salad):<br>'+stock.chicken+','+stock.potato+','+stock.steak+','+stock.salad+'<br>My hour : '+amOp/100+ ' to ' +amCl/100 + ' and ' +pmOp/100 +' to '+pmCl/100 +'<br>Score : '+score+'<br>');
+    if((stock.salad>0 || stock.chicken>0 ) && ((globalTime>amOp && globalTime < amCl)||(globalTime>pmOp && globalTime < pmCl))){
       //Yes, opened
       document.getElementById("restaurant"+id).style.backgroundColor = 'green';
       open = true;
-      console.log("restorant n°",id,"is now open");
+      console.log("restaurant n°",id,"is now open");
     }else{
       //No closed
       document.getElementById("restaurant"+id).style.backgroundColor = 'red';
       open = false;
-      console.log("restorant n°",id,"is now close");
+      console.log("restaurant n°",id,"is now closed");
 
       //We dont have food anymore
-      if(stock.salad<1 && stock.chiken<1 ){
+      if(stock.salad<1 && stock.chicken<1 ){
         document.getElementById("restaurant"+id).innerHTML += ('Out of food<br>');
         //Can we buy it at rungis at this time ?
         if (rungis.isOpen()){
           document.getElementById("restaurant"+id).style.backgroundColor = 'blue';
           //Buy it !
           var waitingTime = rungis.buy();
-          document.getElementById("restaurant"+id).innerHTML += ('buying food at Rungis, waiting ',waitingTime,' <br>');
+          document.getElementById("restaurant"+id).innerHTML += ('ordering food at Rungis, waiting ',waitingTime,' <br>');
           setTimeout(buyfood(10),waitingTime);
-          console.log("restorant n°",id,"is buying food");
+          console.log("restaurant n°",id,"is ordering food");
        }
       }
     }
@@ -294,18 +294,18 @@ function client(tmp_id) {
       var choice = rand(0,listRestaurants.length-1);
       document.getElementById("client"+id).innerHTML = ('Client n°'+id+'<br>'+'Choice restaurant n°'+choice);
       document.getElementById("client"+id).style.backgroundColor = 'red';
-      console.log("Client n°",id,"try to go in restaurant n°",choice);
+      console.log("Client n°",id,"tries to go in restaurant n°",choice);
       //Is this restaurant open ?
       if(!listRestaurants[choice].isOpen()){
         //if it's not, wait 10min
-        document.getElementById("client"+id).innerHTML += ('<br>'+'Not open or no food, i wait 10min');
+        document.getElementById("client"+id).innerHTML += ('<br>'+'Not open or no food, I wait 10min');
         if(!stop){
           setTimeout(this.emit.bind(this, 'loop'), timings.clientWait);
         }
-        console.log("Client n°",id,"restaurant n°",choice,"is not open, wait 10min");
+        console.log("Client n°",id,"restaurant n°",choice,"is not open, I wait 10min");
       }else{
         //if it is, go inside
-        document.getElementById("client"+id).innerHTML += ('<br>'+'Open ! i ask for food');
+        document.getElementById("client"+id).innerHTML += ('<br>'+'Open ! I ask for food');
         document.getElementById("client"+id).style.backgroundColor = 'green';
 
         //choose a menu
@@ -318,7 +318,7 @@ function client(tmp_id) {
 
         var waitingTime = listRestaurants[choice].makeFood(listMenu[tmp]);
 
-        document.getElementById("client"+id).innerHTML += ('buying food at restaurant n°',choice,' waiting ',waitingTime,' <br>');
+        document.getElementById("client"+id).innerHTML += ('ordering food at restaurant n°',choice,' waiting ',waitingTime,' <br>');
         console.log("Client n°",id,"restaurant n°",choice,"wait for menu n°",tmp);
         if (waitingTime>waitResit){
           document.getElementById("client"+id).innerHTML += ('It is more than my wait resist <br>');
@@ -330,8 +330,8 @@ function client(tmp_id) {
             listRestaurants[choice].upScore(1);
         }
 
-        document.getElementById("client"+id).innerHTML += ('I have eat !<br>');
-        console.log("Client n°",id,"restaurant n°",choice,"I have eat !");
+        document.getElementById("client"+id).innerHTML += ('I have eaten !<br>');
+        console.log("Client n°",id,"restaurant n°",choice,"I have eaten !");
         hungry = true;
 
         if(!stop){
@@ -416,6 +416,6 @@ function stop(){
     }
   }
 
-  alert("End of the game !\nThe winner is : Restaurant n°" + winnerid+" With "+listRestaurants[winnerid].getscore()+" point !");
+  alert("Game Over !\nThe winner is : Restaurant n°" + winnerid+" With "+listRestaurants[winnerid].getscore()+" point(s) !");
 
 }
