@@ -416,7 +416,5 @@ function stop(){
     }
   }
 
-  document.body.innerHTML = '<img src="victory.jpg" id = "victory" alt="victory">';
-
   alert("End of the game !\nThe winner is : Restaurant n°" + winnerid+" With "+listRestaurants[winnerid].getscore()+" point !");
 }

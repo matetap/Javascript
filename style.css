@@ -3,12 +3,6 @@ body {
   background-color: #CECEF6;
 }
 
-#victory{
-  margin : auto;
-  height:100px;
-  width:100px;
-}
-
 #stopform{
   position:absolute;
   margin : 16px;
