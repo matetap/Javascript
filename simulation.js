@@ -33,7 +33,7 @@ var nbClient;
 var nbRestaurants;
 var globalTime;
 var listMenu;
-
+var timer;
 
 //function for generate random indeteger between low and high
 function rand(low, high) {
@@ -82,6 +82,9 @@ function start(){
 
   //Make the div for the actor of the simulation
   var html="";
+  html = html.concat('<form id="stopform" >');
+  html = html.concat('<input type="button" onclick="stop()" value="Stop">');
+  html = html.concat('</form>');
   html = html.concat('<div class="timer" id="time" ></div><br><br>');
   html = html.concat('<div class="actor" id="seller0" >Rungis :</div><br><br>');
   for (var i = 0; i < nbRestaurants; i++) {
@@ -94,7 +97,7 @@ function start(){
 
   //Set the global time of the simulation
   globalTime = 0;
-  var timer = setInterval(
+  timer = setInterval(
     function updateTime(){
       document.getElementById("time").innerHTML = ("Curent time : " + Math.floor((globalTime/minInOnehour)) + " h " + (globalTime -(Math.floor((globalTime/minInOnehour))*minInOnehour)) +" min");
       if (globalTime < hourInOneDay*minInOnehour){
@@ -118,7 +121,7 @@ function seller(tmp_id,op,cl) {
   var id = tmp_id;
   //State of the store
   var open = false;
-
+  var stop = false;
   //Is the store open at this time ?
   this.isOpen = function(){
     return open;
@@ -146,8 +149,16 @@ function seller(tmp_id,op,cl) {
       console.log("Rungis is now close");
     }
 
-    setTimeout(this.emit.bind(this, 'loop'), timings.eventLoopTic);
+    if(!stop){
+      setTimeout(this.emit.bind(this, 'loop'), timings.eventLoopTic);
+    }
+
   });
+
+  this.stop = function(){
+  stop=true;
+  }
+
 
 }seller.prototype.__proto__ = events.EventEmitter.prototype;
 
@@ -174,7 +185,8 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
   }
 
   //State of the store
-  var open = false
+  var open = false;
+  var stop = false;
   //Score of this restaurant
   var score = 0;
   this.upScore = function(bonus){
@@ -245,8 +257,19 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
       }
     }
 
-    setTimeout(this.emit.bind(this, 'loop'), timings.eventLoopTic);
-  });
+    if(!stop){
+      setTimeout(this.emit.bind(this, 'loop'), timings.eventLoopTic);
+    }
+
+});
+
+this.stop = function(){
+  stop=true;
+}
+
+this.getscore = function(){
+  return score;
+}
 
 }restaurant.prototype.__proto__ = events.EventEmitter.prototype;
 
@@ -259,8 +282,9 @@ function client(tmp_id) {
   var id=tmp_id;
 
   //State of the client
-  var hungry=true
+  var hungry=true;
   var waitResit = rand(timings.clientResistMin,timings.clientResistMax);
+  var stop = false;
 
   //Internal loop of client
   this.on('loop', function () {
@@ -275,7 +299,9 @@ function client(tmp_id) {
       if(!listRestaurants[choice].isOpen()){
         //if it's not, wait 10min
         document.getElementById("client"+id).innerHTML += ('<br>'+'Not open or no food, i wait 10min');
-        setTimeout(this.emit.bind(this, 'loop'), timings.clientWait);
+        if(!stop){
+          setTimeout(this.emit.bind(this, 'loop'), timings.clientWait);
+        }
         console.log("Client n°",id,"restaurant n°",choice,"is not open, wait 10min");
       }else{
         //if it's, go in
@@ -307,15 +333,24 @@ function client(tmp_id) {
         document.getElementById("client"+id).innerHTML += ('I have eat !<br>');
         console.log("Client n°",id,"restaurant n°",choice,"I have eat !");
         hungry = true;
-        setTimeout(this.emit.bind(this, 'loop'), waitingTime);
 
+        if(!stop){
+          setTimeout(this.emit.bind(this, 'loop'), waitingTime);
+        }
       }
 
     }else{
-      setTimeout(this.emit.bind(this, 'loop'), timings.eventLoopTic);
+      if(!stop){
+        setTimeout(this.emit.bind(this, 'loop'), timings.eventLoopTic);
+      }
     }
 
   });
+
+  this.stop = function(){
+    stop=true;
+    hungry = false;
+  }
 
 }client.prototype.__proto__ = events.EventEmitter.prototype;
 
@@ -362,4 +397,26 @@ function init_actor() {
       listClients[i].emit('loop');
   }
 
+}
+
+
+function stop(){
+  clearTimeout(timer);
+  rungis.stop();
+  for (var i = 0; i < nbRestaurants; i++) {
+      listRestaurants[i].stop();
+  }
+  for (var i = 0; i < nbClient; i++){
+      listClients[i].stop();
+  }
+  var winnerid=0;
+  for (var i = 0; i < nbRestaurants; i++) {
+    if (listRestaurants[i].getscore() >listRestaurants[winnerid].getscore()){
+      winnerid = i;
+    }
+  }
+
+  document.body.innerHTML = '<img src="victory.jpg" id = "victory" alt="victory">';
+
+  alert("End of the game !\nThe winner is : Restaurant n°" + winnerid+" With "+listRestaurants[winnerid].getscore()+" point !");
 }

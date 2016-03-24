@@ -1,5 +1,5 @@
 # TP Javascript ESME Sudria 2C
 
-## How to set up
+## How to set up :
 
-## How it's works
+## How to use :
