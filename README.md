@@ -3,32 +3,32 @@
 ## How to set up :
 
 ###Install git :
-sudo apt-get update
-sudo apt-get install git
+sudo apt-get update<br />
+sudo apt-get install git<br />
 
 ###Install node js :
-sudo apt-get install nodejs
-(you can check if it is install by using the node -v command)
+sudo apt-get install nodejs<br />
+(you can check if it is install by using the node -v command).<br />
 
 ###Install npm :
-sudo npm install npm -g
+sudo npm install npm -g<br />
 
 ###Install electron :
-sudo npm install electron-prebuilt -g
+sudo npm install electron-prebuilt -g<br />
 
 ###Make a new floder where you want to put the project :
-cd ~
-mkdir name_for_prj
-cd name_for_prj
+cd ~<br />
+mkdir name_for_prj<br />
+cd name_for_prj<br />
 
 ###Take the project :
-git clone https://github.com/patoninho1/Javascript.git
+git clone https://github.com/patoninho1/Javascript.git<br />
 
 ###Install chalk :
-npm install chalk
+npm install chalk<br />
 
 ###Start the project :
-electron main.js
+electron main.js<br />
 
 
 ## How to use :
