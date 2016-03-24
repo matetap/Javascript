@@ -28,20 +28,20 @@ const minInOnehour = 100;
 
 
 
-//some global parameter
+//some global parameters
 var nbClient;
 var nbRestaurants;
 var globalTime;
 var listMenu;
 var timer;
 
-//function for generate random indeteger between low and high
+//function to generate random integer between low and high
 function rand(low, high) {
      return Math.floor(Math.random() * (high - low + 1) + low);
 }
 
 
-//The start function, genere the div for display in electron
+//The start function, generatee the div to display in electron
 function start(){
 
   //Get the previous value
@@ -108,7 +108,7 @@ function start(){
     }
   ,timings.oneMin);
 
-  //initialise the game
+  //initialize the game
   init_actor();
 }
 
@@ -127,7 +127,7 @@ function seller(tmp_id,op,cl) {
     return open;
   }
 
-  //When somone want to buy us food, it take betwen 0h15 and 1h15
+  //When someone wants to order us food, it take betwen 0h15 and 1h15
   this.buy = function(){
     return rand(timings.buyFoodMin,timings.buyFoodMax);
   }
@@ -143,7 +143,7 @@ function seller(tmp_id,op,cl) {
       open = true;
       console.log("Rungis is now open");
     }else{
-      //Close
+      //Closed
       document.getElementById("seller"+id).style.backgroundColor = 'red';
       open = false;
       console.log("Rungis is now close");
@@ -170,7 +170,7 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
   //id for the restaurant instance
   var id=tmp_id;
 
-  //Hour of open and close
+  //Time of opening and closing
   var amOp=tmp_amOp;
   var amCl=tmp_amCl;
   var pmOp=tmp_pmOp;
@@ -193,12 +193,12 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
     score +=bonus*( hourInOneDay-(((amCl-amOp)+(pmCl-pmOp))/minInOnehour) );
   }
 
-  //Is the store open at this time ? has it food ?
+  //Is the store open at this time ? Does it have food ?
   this.isOpen = function(){
     return open;
   }
 
-  //When somone want to buy us food, it take betwen 0h05 and 0h50
+  //When someone wants to order us food, it take betwen 0h05 and 0h50
   this.makeFood = function(menu){
     stock.chiken -= menu.chiken;
     stock.potato -= menu.potato;
@@ -229,20 +229,20 @@ function restaurant(tmp_id,tmp_amOp,tmp_amCl,tmp_pmOp,tmp_pmCl) {
   //Internal loop of restaurant
   this.on('loop', function () {
 
-    //is it time to open the store ? Have we food for make 1 menu ?
+    //is it time to open the store ? Have we food to cook 1 menu ?
     document.getElementById("restaurant"+id).innerHTML = ('restaurant n°'+id+'<br>Food stock (chiken,potato,steak,salad):<br>'+stock.chiken+','+stock.potato+','+stock.steak+','+stock.salad+'<br>My hour : '+amOp/100+ ' to ' +amCl/100 + ' and ' +pmOp/100 +' to '+pmCl/100 +'<br>Score : '+score+'<br>');
     if((stock.salad>0 || stock.chiken>0 ) && ((globalTime>amOp && globalTime < amCl)||(globalTime>pmOp && globalTime < pmCl))){
-      //Yes, open
+      //Yes, opened
       document.getElementById("restaurant"+id).style.backgroundColor = 'green';
       open = true;
       console.log("restorant n°",id,"is now open");
     }else{
-      //No close
+      //No closed
       document.getElementById("restaurant"+id).style.backgroundColor = 'red';
       open = false;
       console.log("restorant n°",id,"is now close");
 
-      //We dont have food
+      //We dont have food anymore
       if(stock.salad<1 && stock.chiken<1 ){
         document.getElementById("restaurant"+id).innerHTML += ('Out of food<br>');
         //Can we buy it at rungis at this time ?
@@ -290,12 +290,12 @@ function client(tmp_id) {
   this.on('loop', function () {
 
     if (hungry){
-      //we randomly choice one of the restaurant
+      //we randomly choose one of the restaurants
       var choice = rand(0,listRestaurants.length-1);
       document.getElementById("client"+id).innerHTML = ('Client n°'+id+'<br>'+'Choice restaurant n°'+choice);
       document.getElementById("client"+id).style.backgroundColor = 'red';
       console.log("Client n°",id,"try to go in restaurant n°",choice);
-      //Is this restorant open ?
+      //Is this restaurant open ?
       if(!listRestaurants[choice].isOpen()){
         //if it's not, wait 10min
         document.getElementById("client"+id).innerHTML += ('<br>'+'Not open or no food, i wait 10min');
@@ -304,11 +304,11 @@ function client(tmp_id) {
         }
         console.log("Client n°",id,"restaurant n°",choice,"is not open, wait 10min");
       }else{
-        //if it's, go in
+        //if it is, go inside
         document.getElementById("client"+id).innerHTML += ('<br>'+'Open ! i ask for food');
         document.getElementById("client"+id).style.backgroundColor = 'green';
 
-        //choice a menu
+        //choose a menu
         var tmp = rand(0,listMenu.length-1);
         console.log("Client n°",id,"restaurant n°",choice,"is open, ask for menu n°",tmp);
         while(!listRestaurants[choice].isAvailable(listMenu[tmp])){
